@@ -1,6 +1,21 @@
 import { test, expect } from '@playwright/test'
 
+const createdContents = []
+
+const deleteCreatedAnecdotes = async request => {
+  const response = await request.get('http://localhost:3001/anecdotes')
+  const anecdotes = await response.json()
+
+  for (const anecdote of anecdotes) {
+    if (createdContents.includes(anecdote.content)) {
+      await request.delete(`http://localhost:3001/anecdotes/${anecdote.id}`)
+    }
+  }
+  createdContents.length = 0
+}
+
 const createAnecdote = async (page, { content, author, info }) => {
+  createdContents.push(content)
   await page.getByRole('link', { name: 'create new' }).click()
   const inputs = page.locator('form input')
   await inputs.nth(0).fill(content)
@@ -12,6 +27,10 @@ const createAnecdote = async (page, { content, author, info }) => {
 test.describe('Anecdote app', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
+  })
+
+  test.afterEach(async ({ request }) => {
+    await deleteCreatedAnecdotes(request)
   })
 
   test('a new anecdote can be created', async ({ page }) => {

@@ -1,10 +1,10 @@
-const baseUrl = 'http://localhost:3001/anecdotes'
+const baseUrl = import.meta.env.VITE_ANECDOTES_URL || 'http://localhost:3001/anecdotes'
 
 const getAll = async () => {
   const response = await fetch(baseUrl)
 
   if (!response.ok) {
-    throw new Error('Failed to fetch anecdotes')
+    throw new Error('Failed to fetch notes')
   }
 
   return await response.json()
@@ -16,12 +16,22 @@ const createNew = async (object) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(object),
   })
-  
+
   if (!response.ok) {
-    throw new Error('Failed to create anecdote')
+    throw new Error('Failed to create note')
   }
-  
+
   return await response.json()
 }
 
-export default { getAll, createNew }
+const remove = async (id) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to delete anecdote')
+  }
+}
+
+export default { getAll, createNew, remove }

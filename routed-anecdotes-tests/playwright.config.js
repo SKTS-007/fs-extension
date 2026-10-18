@@ -14,13 +14,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run server',
+      command: 'npm run server:test',
       cwd: '../routed-anecdotes',
-      url: 'http://localhost:3001/anecdotes',
+      url: 'http://localhost:3002/anecdotes',
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: 'npm run dev',
+      command: 'npm run start:test',
       cwd: '../routed-anecdotes',
       url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
